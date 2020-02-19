@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <security:http security="none" pattern="/login.html"/>
+    <security:http security="none" pattern="/failed.html"/>
+
+    <!--
+        配置具体的规则
+        auto-config="false"    选用自己编写登录的页面，不用框架提供的默认登录页面
+        use-expressions="false"    是否使用SPEL表达式（还没学习过）
+    -->
+    <security:http auto-config="true" use-expressions="false">
+        <security:intercept-url pattern="/**" access="ROLE_USER"/>
+        <security:form-login login-page="/login.html"
+                             login-processing-url="/login" username-parameter="username"
+                             password-parameter="password" authentication-failure-url="/failed.html"
+                             default-target-url="/success.html" authentication-success-forward-url="/success.html" />
+
+
+       <!-- <security:logout  invalidate-session="true" logout-url="/logout" logout-success-url="/pages/login.html"/>-->
+        <!-- 关闭跨域请求 默认是开启的-->
+        <security:csrf disabled="true"/>
+    </security:http>
+
+
+
+
+    <security:authentication-manager>
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="user"  password="{noop}user"  authorities="ROLE_USER" />
+                <security:user name="admin" password="{noop}admin" authorities="ROLE_ADMIN"/>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+
+
+</beans>
